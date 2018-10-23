@@ -4,7 +4,7 @@
 
 function initState_i3 {
   # Start the subscribing python script.
-  $(dirname ${BASH_SOURCE[0]})/i3subscriber.py &
+  $(dirname ${BASH_SOURCE[0]})/i3subscriber.py 2> /tmp/powerstatus_segment_i3.log &
   PID_LIST="$PID_LIST $!"
   STATE="1 ${I3_SEPARATOR_CURRENT}"
 }
@@ -12,7 +12,7 @@ function initState_i3 {
 function format_i3 {
   window="${1%:*}"
   window="${window##*-} - ${window%%-*}"
-  windowAbbr=$(abbreviate "$window")
+  windowAbbr=$(abbreviate "$window" "i3")
 
   workspaceString="${1##*:}"
   IFS=',' read -ra workspaces <<< "$workspaceString"
