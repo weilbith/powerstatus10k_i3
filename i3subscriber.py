@@ -6,7 +6,7 @@ import functools
 import i3ipc
 
 # Properties
-fifoName = '/tmp/powerstatus_segment_i3'
+fifo_name = os.getenv('XDG_RUNTIME_DIR', '/tmp') + '/powerstatus10k/fifos/i3'
 window = ''
 workspaces = ''
 
@@ -17,11 +17,11 @@ i3 = i3ipc.Connection()
 def pipe():
     # Create the FIFO if not exist yet.
     # Do it here, to avoid problems on a deleted FIFO during runtime.
-    if not os.path.exists(fifoName):
-        os.mkfifo(fifoName)
+    if not os.path.exists(fifo_name):
+        os.mkfifo(fifo_name)
 
     # Write to the FIFO.
-    with open(fifoName, 'w') as fifo:
+    with open(fifo_name, 'w') as fifo:
         fifo.write(window + ':' + workspaces + '\n')
 
 # Called on workspace focus event.

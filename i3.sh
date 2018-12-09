@@ -4,8 +4,9 @@
 
 function initState_i3 {
   # Start the subscribing python script.
-  $(dirname ${BASH_SOURCE[0]})/i3subscriber.py 2> /tmp/powerstatus_segment_i3.log &
+  "$(dirname "${BASH_SOURCE[0]}")/i3subscriber.py" &
   PID_LIST="$PID_LIST $!"
+  # shellcheck disable=SC2034,SC2154
   STATE="1 ${I3_SEPARATOR_CURRENT}"
 }
 
@@ -22,7 +23,7 @@ function format_i3 {
   length=${#workspaces[@]}
   last=$((length - 1))
 
-  for (( i=0; i<$length; i++)) ; do
+  for (( i=0; i<length; i++)) ; do
     workspace=${workspaces[i]}
 
     # Check if this is the current workspace by the signal char.
@@ -40,5 +41,6 @@ function format_i3 {
     fi
   done
 
+  # shellcheck disable=SC2034,SC2154
   STATE="$formatString"
 }
