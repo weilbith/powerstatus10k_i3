@@ -1,22 +1,38 @@
 #!/bin/bash
 #
-# PowerStatus10k segment.
+# PowerStatus10k segment to show i3 window manager related information.
 
 function initState_i3 {
   # Start the subscribing python script.
-  "$(dirname "${BASH_SOURCE[0]}")/i3subscriber.py" &
+  "$(dirname "${BASH_SOURCE[0]}")/i3subscriber.py" "$I3_PROPERTY_SEPARATOR" "$I3_WINDOW_LABEL" &
   PID_LIST="$PID_LIST $!"
-  # shellcheck disable=SC2034,SC2154
-  STATE="1 ${I3_SEPARATOR_CURRENT}"
+  STATE=""
 }
 
 function format_i3 {
-  window="${1%:*}"
-  window="${window##*-} - ${window%%-*}"
-  windowAbbr=$(abbreviate "$window" "i3")
+  # Split properties.
+  IFS="$I3_PROPERTY_SEPARATOR" read -ra properties <<< "$1"
 
-  workspaceString="${1##*:}"
-  IFS=',' read -ra workspaces <<< "$workspaceString"
+  window="${properties[0]}"
+  mark="${properties[1]}"
+  mode="${properties[2]}"
+  workspaces="${properties[3]}"
+
+  windowAbbr=$(abbreviate "${window^}" "i3")
+
+  markString=""
+  [[ $I3_MARK_ENABLE == true ]] && \
+    [[ -n "$mark" ]] && \
+    markString="%{F$I3_MARK_COLOR}$mark $I3_MARK_ICON%{F-}  "
+
+  modeString=""
+  [[ $I3_MODE_ENABLE == true ]] && \
+    [[ -n "$mode" ]] && \
+    [[ "$mode" != "$I3_MODE_DEFAULT" ]] && \
+    modeString="  %{F$I3_MODE_COLOR}$I3_MODE_ICON $mode%{F-}"
+
+
+  IFS=',' read -ra workspaces <<< "$workspaces"
 
   formatString=""
   separator="$I3_SEPARATOR_LEFT" # Will be switched after the current workspace.
@@ -28,7 +44,7 @@ function format_i3 {
 
     # Check if this is the current workspace by the signal char.
     if [[ "$workspace" =~ "!" ]] ; then
-      formatString="${formatString} ${workspace:1} ${I3_SEPARATOR_CURRENT} ${windowAbbr}" # Do not forget to cut of the leading singal char.
+      formatString="${formatString} ${workspace:1} ${I3_SEPARATOR_CURRENT} ${markString}${windowAbbr}${modeString}" # Do not forget to cut of the leading singal char.
       separator="$I3_SEPARATOR_RIGHT" # Switch the separator here.
 
     else
