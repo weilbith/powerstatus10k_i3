@@ -5,8 +5,6 @@
 function initState_i3 {
   # Start the subscribing python script.
   "$(dirname "${BASH_SOURCE[0]}")/i3subscriber.py" "$I3_PROPERTY_SEPARATOR" "$I3_WINDOW_LABEL" &
-  PID_LIST="$PID_LIST $!"
-  STATE=""
 }
 
 function format_i3 {
