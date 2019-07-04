@@ -27,7 +27,10 @@ def pipe():
     # Write to the FIFO.
     with open(fifo_name, "w") as fifo:
         fifo.write(
-            f"{window}{property_separator}{mark}{property_separator}{mode}{property_separator}{workspaces}\n"
+            (
+                f"{window}{property_separator}{mark}{property_separator}"
+                f"{mode}{property_separator}{workspaces}\n"
+            )
         )
 
 
