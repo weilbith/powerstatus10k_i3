@@ -3,6 +3,7 @@
 # Imports
 import os
 import sys
+
 import i3ipc
 
 # Properties
@@ -63,10 +64,10 @@ def update_workspace_state(self, e):
     # Concatenate the names of all workspaces.
     for workspace in self.get_workspaces():
         # Check if this workspace is the focused one and mark it if so.
-        if workspace["focused"]:
+        if workspace.focused:
             workspaces += "!"
 
-        workspaces += workspace["name"] + ","
+        workspaces += workspace.name + ","
 
     pipe()
 
